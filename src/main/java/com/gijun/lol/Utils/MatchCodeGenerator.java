@@ -1,4 +1,4 @@
-package com.gijun.lol.util;
+package com.gijun.lol.Utils;
 
 import java.util.UUID;
 
