@@ -1,5 +1,5 @@
 <script>
-    const positions = ["Top", "Jungle", "Mid", "Support", "ADC"];
+    const positions = ["Top", "Jungle", "Mid", "ADC","Support"];
 
     let victoryTeam = "";
 

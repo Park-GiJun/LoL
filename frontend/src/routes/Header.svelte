@@ -7,8 +7,8 @@
     </div>
     <ul class="nav-links">
         <li><a href="/">Main</a></li>
-        <li><a href="/BestPlayer">Best Player</a></li>
-        <li><a href="/BestChampion">Best Champion</a></li>
+        <li><a href="/Matches">Matches</a></li>
+        <li><a href="/Player">Player History</a></li>
         <li><a href="/RecentMatch">Recent Match</a></li>
         <li><a href="/SaveMatch">Save Match</a></li>
     </ul>

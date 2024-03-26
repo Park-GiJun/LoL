@@ -14,10 +14,14 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 	@Query(value = "SELECT g.summoner_name AS summonerName, g.nickname AS nickname, " +
 			"(SELECT champion FROM game_data gd WHERE gd.summoner_name = g.summoner_name GROUP BY gd.champion ORDER BY COUNT(*) DESC LIMIT 1) AS mostChampion, " +
 			"(SELECT COUNT(*) FROM game_data gd WHERE gd.summoner_name = g.summoner_name) AS playedGames, " +
-			"ROUND(SUM(CASE WHEN g.winning = 1 THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS winningPercentage " +
+			"ROUND(SUM(CASE WHEN g.winning = 1 THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS winningPercentage, " +
+			"g.kills, g.assists, g.deaths, " +
+			"ROUND((SUM(g.kills) + SUM(g.assists)) / GREATEST(SUM(g.deaths), 1), 2) AS kda " +
 			"FROM game_data g GROUP BY g.summoner_name, g.nickname " +
 			"ORDER BY winningPercentage DESC, playedGames DESC", nativeQuery = true)
 	List<LeaderboardEntry> findLeaderboardEntries();
+
+
 
 
 

@@ -6,4 +6,8 @@ public interface LeaderboardEntry {
 	String getMostChampion();
 	Integer getPlayedGames();
 	Double getWinningPercentage();
+	Integer getKills();
+	Integer getDeaths();
+	Integer getAssists();
+	Double getKda();
 }

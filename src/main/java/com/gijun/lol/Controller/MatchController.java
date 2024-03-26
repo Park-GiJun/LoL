@@ -51,4 +51,9 @@ public class MatchController {
 	public ResponseEntity<List<LeaderboardEntry>> getLeaderBoard(){
 		return ResponseEntity.ok (gameDataService.getLeaderBoard ());
 	}
+
+	@GetMapping("/matches")
+	public ResponseEntity<List<List<GameData>>> getMatches(){
+		return ResponseEntity.ok (gameDataService.getAllMatchDataGroupedByMatchCode ());
+	}
 }

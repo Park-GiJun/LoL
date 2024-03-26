@@ -10,6 +10,8 @@ import com.gijun.lol.Repository.MatchCodeRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -61,5 +63,17 @@ public class GameDataService {
 			System.out.println (list);
 		}
 		return gameDataRepository.findLeaderboardEntries ();
+	}
+
+	public List<List<GameData>> getAllMatchDataGroupedByMatchCode() {
+		List<MatchCode> allMatchCodes = matchCodeRepository.findAll();
+
+		List<List<GameData>> groupedGameData = new ArrayList<> ();
+		for (MatchCode matchCode : allMatchCodes) {
+			List<GameData> gameDataForMatch = gameDataRepository.findByMatchCode(matchCode.getMatchCode());
+			groupedGameData.add(gameDataForMatch);
+		}
+
+		return groupedGameData;
 	}
 }
