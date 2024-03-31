@@ -81,7 +81,7 @@
         {#each $rows as row (row.id)}
             <tr animate:flip={{ duration: 400 }}>
                 <td>{row.PlayedGame}</td>
-                <td>{row.Nickname}</td>
+                <td><a href="https://www.op.gg/summoners/kr/{row.Nickname}" target="_blank">{row.Nickname}</a></td>
                 <td>{row.Name}</td>
                 <td>{row.MostChampion}</td>
                 <td>{row.WinningPercentage}</td>

@@ -1,20 +1,19 @@
 package com.gijun.lol.Service;
 
-import com.gijun.lol.Data.LeaderboardEntry;
-import com.gijun.lol.Data.MatchData;
-import com.gijun.lol.Data.PlayerInfo;
+import com.gijun.lol.Data.*;
 import com.gijun.lol.Entity.GameData;
 import com.gijun.lol.Entity.MatchCode;
 import com.gijun.lol.Repository.GameDataRepository;
 import com.gijun.lol.Repository.MatchCodeRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
+@Log4j2
 public class GameDataService {
 
 	private final GameDataRepository gameDataRepository;
@@ -57,11 +56,12 @@ public class GameDataService {
 		return List.of();
 	}
 
+	public List<GameData> targetMatch(String matchCode){
+		return gameDataRepository.findByMatchCode (matchCode);
+	}
+
 	public List<LeaderboardEntry> getLeaderBoard(){
 		List<LeaderboardEntry> lists = gameDataRepository.findLeaderboardEntries ();
-		for(LeaderboardEntry list : lists){
-			System.out.println (list);
-		}
 		return gameDataRepository.findLeaderboardEntries ();
 	}
 
@@ -76,4 +76,32 @@ public class GameDataService {
 
 		return groupedGameData;
 	}
+
+	public PlayerData getPlayerData(String type, String keyword) {
+		PlayerData playerData = new PlayerData();
+
+		if (type.equals ("nickname")) {
+			List<GameData> matchData = gameDataRepository.findByNicknameOrderByDateDesc(keyword);
+			playerData.setList(matchData);
+
+			GameDataProjection aggregatedData = gameDataRepository.findAggregatedDataByNickname(keyword);
+			playerData.setGameDataProjection(aggregatedData);
+		} else {
+			List<GameData> matchData = gameDataRepository.findBySummonerNameOrderByDateDesc (keyword);
+			playerData.setList(matchData);
+
+			GameDataProjection aggregatedData = gameDataRepository.findAggregatedDataBySummonerName (keyword);
+			playerData.setGameDataProjection(aggregatedData);
+		}
+		return playerData;
+	}
+
+	public List<String> getActiveDate(){
+		return gameDataRepository.findDistinctDates ();
+	}
+
+	public ArchiveEntry queryArchive(){
+		return gameDataRepository.getGameStatistics ();
+	}
+
 }

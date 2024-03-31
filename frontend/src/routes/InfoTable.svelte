@@ -19,6 +19,7 @@
     });
 </script>
 
+<div class="main_container">
 <table>
     <thead>
     <tr>
@@ -53,6 +54,7 @@
     {/each}
     </tbody>
 </table>
+</div>
 
 <style>
     table {
@@ -62,15 +64,12 @@
         margin: 20px 0;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         border-radius: 8px;
-        overflow: hidden;
     }
 
     th, td {
         border: 1px solid #ddd;
         padding: 12px 8px;
         text-align: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
         white-space: nowrap;
     }
 
@@ -78,6 +77,11 @@
         background-color: #f2f2f2;
         color: #333;
         font-weight: bold;
+    }
+
+    .main_container{
+        overflow-x: auto;
+        overflow-y: auto;
     }
 
     .nickname, .summonerName, .champion, .kda {
@@ -106,6 +110,29 @@
     .defeat {
         background-color: #F08080;
         color: white;
+    }
+
+    @media (max-width: 768px) {
+        th, td {
+            padding: 8px 4px;
+            font-size: 14px;
+        }
+        .nickname, .summonerName, .champion, .kda {
+            width: 25%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        th, td {
+            padding: 6px 2px;
+            font-size: 12px;
+        }
+        .nickname, .summonerName, .champion, .kda {
+            width: auto;
+        }
+        .main_container{
+            overflow-x: auto;
+        }
     }
 </style>
 

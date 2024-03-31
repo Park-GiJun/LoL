@@ -1,115 +1,140 @@
 <script>
-    const positions = ["Top", "Jungle", "Mid", "ADC","Support"];
+	const positions = ['Top', 'Jungle', 'Mid', 'ADC', 'Support'];
 
-    let victoryTeam = "";
+	let victoryTeam = '';
 
-    $: purpleClass = victoryTeam === '0' ? 'purple-victory' : '';
-    $: redClass = victoryTeam === '1' ? 'red-victory' : '';
+	$: purpleClass = victoryTeam === '0' ? 'purple-victory' : '';
+	$: redClass = victoryTeam === '1' ? 'red-victory' : '';
 
-    let teamPurple = positions.map(position => ({
-        teamColor: "Purple",
-        nickname: "",
-        summonerName: "",
-        champion: "",
-        position: position,
-        kills: 0,
-        deaths: 0,
-        assists: 0,
-    }));
+	let teamPurple = positions.map(position => ({
+		teamColor: 'Purple',
+		nickname: '',
+		summonerName: '',
+		champion: '',
+		position: position,
+		kills: 0,
+		deaths: 0,
+		assists: 0,
+		autoCompleteData: {}
+	}));
 
-    let teamRed = positions.map(position => ({
-        teamColor: "Red",
-        nickname: "",
-        summonerName: "",
-        champion: "",
-        position: position,
-        kills: 0,
-        deaths: 0,
-        assists: 0,
-    }));
+	let teamRed = positions.map(position => ({
+		teamColor: 'Red',
+		nickname: '',
+		summonerName: '',
+		champion: '',
+		position: position,
+		kills: 0,
+		deaths: 0,
+		assists: 0,
+		autoCompleteData: {}
+	}));
 
-    const isFormValid = () => {
-        if (!victoryTeam) return false;
-        const allPlayers = [...teamPurple, ...teamRed];
-        return allPlayers.every(player =>
-            player.nickname && player.summonerName && player.champion &&
-            player.kills !== undefined && player.deaths !== undefined && player.assists !== undefined
-        );
-    };
+	const isFormValid = () => {
+		if (!victoryTeam) return false;
+		const allPlayers = [...teamPurple, ...teamRed];
+		return allPlayers.every(player =>
+			player.nickname && player.summonerName && player.champion &&
+			player.kills !== undefined && player.deaths !== undefined && player.assists !== undefined
+		);
+	};
 
-    function saveMatchInfo() {
-        if (!isFormValid()) {
-            alert("모든 필드를 올바르게 입력해주세요.");
-            return;
-        }
-        const currentDate = new Date().toISOString().split('T')[0];
-        const updatedTeamPurple = teamPurple.map(player => ({
-            ...player,
-            winning: victoryTeam === '0' ? 1 : 0,
-        }));
-        const updatedTeamRed = teamRed.map(player => ({
-            ...player,
-            winning: victoryTeam === '1' ? 1 : 0,
-        }));
-        const matchData = {
-            date: currentDate,
-            teams: [...updatedTeamPurple, ...updatedTeamRed]
-        };
+	function saveMatchInfo() {
+		if (!isFormValid()) {
+			alert('모든 필드를 올바르게 입력해주세요.');
+			return;
+		}
+		const currentDate = new Date().toISOString().split('T')[0];
+		const updatedTeamPurple = teamPurple.map(player => ({
+			...player,
+			winning: victoryTeam === '0' ? 1 : 0
+		}));
+		const updatedTeamRed = teamRed.map(player => ({
+			...player,
+			winning: victoryTeam === '1' ? 1 : 0
+		}));
+		const matchData = {
+			date: currentDate,
+			teams: [...updatedTeamPurple, ...updatedTeamRed]
+		};
 
-        console.log(JSON.stringify(matchData, null, 2));
+		console.log(JSON.stringify(matchData, null, 2));
 
-        fetch('/api/saveMatches', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(matchData),
-        })
-            .then(response => response.json())
-            .then(data => console.log('Success:', data))
-            .catch((error) => console.error('Error:', error));
-    }
+		fetch('/api/saveMatches', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(matchData)
+		})
+			.then(response => response.json())
+			.then(data => console.log('Success:', data))
+			.catch((error) => console.error('Error:', error));
+	}
+
+	let searchResults = [];
+
+	function autoComplete(player, field, value) {
+		if (value.length < 2) {
+			player.autoCompleteData = {};
+			return;
+		}
+
+		fetch(`/api/autoComplete?field=${field}&value=${value}`)
+			.then(response => response.json())
+			.then(data => {
+				player.autoCompleteData = data;
+
+				if (field === 'nickname') {
+					player.summonerName = data.summonerName;
+				} else if (field === 'summonerName') {
+					player.nickname = data.nickname;
+				}
+			})
+			.catch(error => console.error('Error:', error));
+	}
 
 </script>
 
 <form on:submit|preventDefault={saveMatchInfo}>
-    <div class="team-container {victoryTeam === '0' ? 'purple-victory' : victoryTeam === '1' ? 'red-victory' : ''}">
-        <div class="team team-purple {victoryTeam === '0' ? 'selected-team' : 'not-selected-team'}">
-            <h2>퍼플 팀</h2>
-            {#each teamPurple as player, index}
-                <div class="player-entry">
-                    <input type="text" bind:value={player.nickname} placeholder="닉네임"/>
-                    <input type="text" bind:value={player.summonerName} placeholder="이름"/>
-                    <input type="text" bind:value={player.champion} placeholder="챔피언"/>
-                    <input type="number" bind:value={player.kills} placeholder="킬" class="kills-deaths-assists"/>
-                    <input type="number" bind:value={player.deaths} placeholder="데스" class="kills-deaths-assists"/>
-                    <input type="number" bind:value={player.assists} placeholder="어시스트" class="kills-deaths-assists"/>
-                </div>
-            {/each}
-        </div>
+	<div class="team-container {victoryTeam === '0' ? 'purple-victory' : victoryTeam === '1' ? 'red-victory' : ''}">
+		<div class="team team-purple {victoryTeam === '0' ? 'selected-team' : 'not-selected-team'}">
+			<h2>퍼플 팀</h2>
+			{#each teamPurple as player, index}
+				<div class="player-entry">
+					<input type="text" bind:value={player.nickname} placeholder="닉네임" on:input={() => autoComplete(player, 'nickname', player.nickname)} readonly/>
+					<input type="text" bind:value={player.summonerName} placeholder="이름" on:input={() => autoComplete(player, 'summonerName', player.summonerName)} />
+					<input type="text" bind:value={player.champion} placeholder="챔피언" />
+					<input type="number" bind:value={player.kills} placeholder="킬" class="kills-deaths-assists" />
+					<input type="number" bind:value={player.deaths} placeholder="데스" class="kills-deaths-assists" />
+					<input type="number" bind:value={player.assists} placeholder="어시스트" class="kills-deaths-assists" />
+				</div>
+			{/each}
+		</div>
 
-        <div class="team team-red {victoryTeam === '1' ? 'selected-team' : 'not-selected-team'}">
-            <h2>레드 팀</h2>
-            {#each teamRed as player, index}
-                <div class="player-entry">
-                    <input type="text" bind:value={player.nickname} placeholder="닉네임"/>
-                    <input type="text" bind:value={player.summonerName} placeholder="이름"/>
-                    <input type="text" bind:value={player.champion} placeholder="챔피언"/>
-                    <input type="number" bind:value={player.kills} placeholder="킬" class="kills-deaths-assists"/>
-                    <input type="number" bind:value={player.deaths} placeholder="데스" class="kills-deaths-assists"/>
-                    <input type="number" bind:value={player.assists} placeholder="어시스트" class="kills-deaths-assists"/>
-                </div>
-            {/each}
-        </div>
-    </div>
-    <div class="victory-selection">
-        <input bind:group={victoryTeam} id="teamPurpleWin" type="radio" value="0">
-        <label for="teamPurpleWin">퍼플 팀 승리</label>
+		<div class="team team-red {victoryTeam === '1' ? 'selected-team' : 'not-selected-team'}">
+			<h2>레드 팀</h2>
+			{#each teamRed as player, index}
+				<div class="player-entry">
+					<input type="text" bind:value={player.nickname} placeholder="닉네임" on:input={() => autoComplete(player, 'nickname', player.nickname)} readonly/>
+					<input type="text" bind:value={player.summonerName} placeholder="이름" on:input={() => autoComplete(player, 'summonerName', player.summonerName)} />
+					<input type="text" bind:value={player.champion} placeholder="챔피언" />
+					<input type="number" bind:value={player.kills} placeholder="킬" class="kills-deaths-assists" />
+					<input type="number" bind:value={player.deaths} placeholder="데스" class="kills-deaths-assists" />
+					<input type="number" bind:value={player.assists} placeholder="어시스트" class="kills-deaths-assists" />
+				</div>
+			{/each}
 
-        <input bind:group={victoryTeam} id="teamRedWin" type="radio" value="1">
-        <label for="teamRedWin">레드 팀 승리</label>
-    </div>
-    <button type="submit">매치 정보 저장</button>
+		</div>
+	</div>
+	<div class="victory-selection">
+		<input bind:group={victoryTeam} id="teamPurpleWin" type="radio" value="0">
+		<label for="teamPurpleWin">퍼플 팀 승리</label>
+
+		<input bind:group={victoryTeam} id="teamRedWin" type="radio" value="1">
+		<label for="teamRedWin">레드 팀 승리</label>
+	</div>
+	<button type="submit">매치 정보 저장</button>
 </form>
 
 <style>
