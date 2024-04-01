@@ -104,4 +104,11 @@ public class GameDataService {
 		return gameDataRepository.getGameStatistics ();
 	}
 
+	public PlayerProjection searchWinningPercentage (getPlayers getPlayers) {
+		String summoner_name = getPlayers.getSummoner_name ();
+		String position = getPlayers.getPosition ();
+
+		return gameDataRepository.findWinningPercentage (summoner_name, position);
+	}
+
 }

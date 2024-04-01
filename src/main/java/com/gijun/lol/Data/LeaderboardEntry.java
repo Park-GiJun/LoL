@@ -10,4 +10,5 @@ public interface LeaderboardEntry {
 	Integer getDeaths();
 	Integer getAssists();
 	Double getKda();
+	Integer getUser_count();
 }

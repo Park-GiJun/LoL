@@ -1,18 +1,17 @@
 package com.gijun.lol.Controller;
 
-import com.gijun.lol.Data.ArchiveEntry;
-import com.gijun.lol.Data.LeaderboardEntry;
-import com.gijun.lol.Data.MatchData;
-import com.gijun.lol.Data.PlayerData;
+import com.gijun.lol.Data.*;
 import com.gijun.lol.Entity.GameData;
 import com.gijun.lol.Service.GameDataService;
 import com.gijun.lol.Service.MatchCodeService;
+import com.gijun.lol.Utils.TeamBalancer;
 import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -79,5 +78,20 @@ public class MatchController {
 	public ResponseEntity<ArchiveEntry> getArchive() {
 		ArchiveEntry archiveEntry = gameDataService.queryArchive ();
 		return ResponseEntity.ok(archiveEntry);
+	}
+
+	@PostMapping("/AutoMatchMaking")
+	public ResponseEntity<List<List<Player>>> doAutoMatchMaking(@RequestBody List<getPlayers> players) {
+		List<Player> allPlayers = new ArrayList<>();
+
+		for (getPlayers player : players) {
+			PlayerProjection playerProjection = gameDataService.searchWinningPercentage(player);
+			Player findPlayer = new Player(playerProjection.getSummoner_name(), playerProjection.getWinningPercentage(), playerProjection.getPosition());
+			allPlayers.add(findPlayer);
+		}
+
+		TeamBalancer teamBalancer = new TeamBalancer();
+
+		return ResponseEntity.ok( teamBalancer.findBalance(allPlayers));
 	}
 }

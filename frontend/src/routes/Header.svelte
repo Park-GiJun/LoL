@@ -12,6 +12,7 @@
         <li><a href="/RecentMatch">Recent Match</a></li>
         <li><a href="/UserRegi">User Registration</a></li>
         <li><a href="/SaveMatch">Save Match</a></li>
+        <li><a href="/AutoMatch">AutoMatch</a></li>
     </ul>
 </nav>
 
