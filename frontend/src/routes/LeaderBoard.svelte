@@ -66,7 +66,7 @@
 
 
 <div style="overflow-x:auto; overflow-y:auto; max-height: 500px;">
-    <table>
+    <table class="table-container">
         <thead>
         <tr>
             <th on:click={() => sortTable('PlayedGame')}>PlayedGame</th>
@@ -107,5 +107,15 @@
     th {
         background-color: #f4f4f4;
         cursor: pointer;
+    }
+
+    @media (max-width:1024px) {
+        th, td {
+            padding: 4px;
+            font-size: 7px;
+        }
+        .table-container {
+            overflow-x: scroll;
+        }
     }
 </style>

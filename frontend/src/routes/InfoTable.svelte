@@ -112,25 +112,16 @@
         color: white;
     }
 
-    @media (max-width: 768px) {
-        th, td {
-            padding: 8px 4px;
-            font-size: 14px;
-        }
-        .nickname, .summonerName, .champion, .kda {
-            width: 25%;
-        }
-    }
 
-    @media (max-width: 480px) {
+    @media (max-width:1024px) {
         th, td {
             padding: 6px 2px;
-            font-size: 12px;
+            font-size: 7px;
         }
         .nickname, .summonerName, .champion, .kda {
             width: auto;
         }
-        .main_container{
+        .main_container {
             overflow-x: auto;
         }
     }

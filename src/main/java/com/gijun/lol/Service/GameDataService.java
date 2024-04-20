@@ -1,16 +1,17 @@
 package com.gijun.lol.Service;
 
 import com.gijun.lol.Data.*;
+import com.gijun.lol.Entity.Ban;
 import com.gijun.lol.Entity.GameData;
 import com.gijun.lol.Entity.MatchCode;
+import com.gijun.lol.Repository.BanRepository;
 import com.gijun.lol.Repository.GameDataRepository;
 import com.gijun.lol.Repository.MatchCodeRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Log4j2
@@ -18,34 +19,53 @@ public class GameDataService {
 
 	private final GameDataRepository gameDataRepository;
 	private final MatchCodeRepository matchCodeRepository;
+	private final BanRepository banRepository;
 
-	public GameDataService(GameDataRepository gameDataRepository, MatchCodeRepository matchCodeRepository) {
+	public GameDataService(GameDataRepository gameDataRepository, MatchCodeRepository matchCodeRepository, BanRepository banRepository) {
 		this.gameDataRepository = gameDataRepository;
 		this.matchCodeRepository = matchCodeRepository;
+		this.banRepository = banRepository;
 	}
 
 	public void saveMatchData(MatchData matchData, String matchCode) {
 		String currentDate = matchData.getDate();
-
 		List<PlayerInfo> teams = matchData.getTeams();
+
 		for (PlayerInfo playerInfo : teams) {
-			GameData gameData = new GameData();
+			this.savePlayerInfo(playerInfo, matchCode, currentDate);
+		}
 
-			gameData.setDate(LocalDate.parse(currentDate));
-			gameData.setMatchCode(matchCode);
-			gameData.setTeamColor(playerInfo.getTeamColor());
-			gameData.setNickname(playerInfo.getNickname());
-			gameData.setSummonerName(playerInfo.getSummonerName());
-			gameData.setChampion(playerInfo.getChampion());
-			gameData.setPosition(playerInfo.getPosition());
-			gameData.setKills(playerInfo.getKills());
-			gameData.setDeaths(playerInfo.getDeaths());
-			gameData.setAssists(playerInfo.getAssists());
-			gameData.setWinning (playerInfo.getWinning ());
+		this.saveBans(matchData.getBans().get("purple"), "Purple", matchCode);
+		this.saveBans(matchData.getBans().get("red"), "Red", matchCode);
+	}
 
-			gameDataRepository.save(gameData);
+	public void savePlayerInfo(PlayerInfo playerInfo, String matchCode, String date) {
+		GameData gameData = new GameData();
+		gameData.setDate(LocalDate.parse(date));
+		gameData.setMatchCode(matchCode);
+		gameData.setTeamColor(playerInfo.getTeamColor());
+		gameData.setNickname(playerInfo.getNickname());
+		gameData.setSummonerName(playerInfo.getSummonerName());
+		System.out.println (playerInfo.getSummonerName () + " : " + playerInfo.getChampion ());
+		gameData.setChampion(playerInfo.getChampion());
+		gameData.setPosition(playerInfo.getPosition());
+		gameData.setKills(playerInfo.getKills());
+		gameData.setDeaths(playerInfo.getDeaths());
+		gameData.setAssists(playerInfo.getAssists());
+		gameData.setWinning(playerInfo.getWinning());
+		this.gameDataRepository.save(gameData);
+	}
+
+	public void saveBans(List<String> bans, String teamColor, String matchCode) {
+		for (String ban : bans) {
+			Ban banData = new Ban();
+			banData.setBanChampion(ban);
+			banData.setBanTeamColor(teamColor);
+			banData.setMatchCode(matchCode);
+			this.banRepository.save(banData);
 		}
 	}
+
 
 
 	public List<GameData> recentGame(){
@@ -71,6 +91,7 @@ public class GameDataService {
 		List<List<GameData>> groupedGameData = new ArrayList<> ();
 		for (MatchCode matchCode : allMatchCodes) {
 			List<GameData> gameDataForMatch = gameDataRepository.findByMatchCode(matchCode.getMatchCode());
+			gameDataForMatch.sort (Comparator.comparing (GameData::getDate));
 			groupedGameData.add(gameDataForMatch);
 		}
 
@@ -79,6 +100,7 @@ public class GameDataService {
 
 	public PlayerData getPlayerData(String type, String keyword) {
 		PlayerData playerData = new PlayerData();
+		log.info ("검색어 {}", keyword);
 
 		if (type.equals ("nickname")) {
 			List<GameData> matchData = gameDataRepository.findByNicknameOrderByDateDesc(keyword);
@@ -109,6 +131,14 @@ public class GameDataService {
 		String position = getPlayers.getPosition ();
 
 		return gameDataRepository.findWinningPercentage (summoner_name, position);
+	}
+
+	public List<String> searchChampions() {
+		return gameDataRepository.findDistinctChampions();
+	}
+
+	public List<UserListProjection> searchUserList(){
+		return gameDataRepository.userAndSummonerName ();
 	}
 
 }

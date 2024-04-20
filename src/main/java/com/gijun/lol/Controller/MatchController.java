@@ -28,14 +28,11 @@ public class MatchController {
 	}
 
 	@PostMapping("/saveMatches")
-	public ResponseEntity<String> saveMatchInfo (@RequestBody MatchData matchData) {
-		Gson gson = new Gson ();
-		String json = gson.toJson (matchData);
-
-		String matchCode = matchCodeService.saveMatchCode ();
-
-		gameDataService.saveMatchData (matchData, matchCode);
-
+	public ResponseEntity<String> saveMatchInfo(@RequestBody MatchData matchData) {
+		Gson gson = new Gson();
+		gson.toJson(matchData);
+		String matchCode = matchCodeService.saveMatchCode();
+		gameDataService.saveMatchData(matchData, matchCode);
 		return new ResponseEntity<> ("Match data saved successfully", HttpStatus.CREATED);
 	}
 
@@ -94,4 +91,15 @@ public class MatchController {
 
 		return ResponseEntity.ok( teamBalancer.findBalance(allPlayers));
 	}
+
+	@GetMapping("/champions")
+	public ResponseEntity<List<String>> getChampionList () {
+		return ResponseEntity.ok (gameDataService.searchChampions ());
+	}
+
+	@GetMapping("/getUser")
+	public ResponseEntity<List<UserListProjection>> getUserList(){
+		return ResponseEntity.ok (gameDataService.searchUserList ());
+	}
+
 }

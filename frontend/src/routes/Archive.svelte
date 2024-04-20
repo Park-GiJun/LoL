@@ -71,14 +71,13 @@
         color: #666;
         font-weight: 400;
     }
-    @media (max-width: 768px) {
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    @media (max-width: 480px) {
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-    }
+	@media (max-width: 1024px) {
+		.stats-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		.stat-header, .stat-content {
+			font-size: 0.9em;
+		}
+	}
+
 </style>

@@ -2,14 +2,10 @@
 </script>
 
 <nav class="header">
-    <div class="logo">
-        <a href="/">내전 전적</a>
-    </div>
     <ul class="nav-links">
         <li><a href="/">Main</a></li>
         <li><a href="/Matches">Matches</a></li>
         <li><a href="/Player">Player History</a></li>
-        <li><a href="/RecentMatch">Recent Match</a></li>
         <li><a href="/UserRegi">User Registration</a></li>
         <li><a href="/SaveMatch">Save Match</a></li>
         <li><a href="/AutoMatch">AutoMatch</a></li>
@@ -21,32 +17,53 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: hsl(208, 77%, 55%);
+        background-color: #3492e5;
         padding: 0.5rem 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 8px;
     }
 
-    .logo a {
-        color: white;
-        text-decoration: none;
-        font-size: 1.5rem;
-    }
 
     .nav-links {
         list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
     }
 
     .nav-links li {
-        display: inline;
-        margin-left: 20px;
+        padding: 0 20px;
     }
 
     .nav-links a {
-        color: white;
+        color: #CBD5E0;
         text-decoration: none;
+        font-size: 1rem;
         transition: color 0.3s ease;
+        padding: 10px 5px;
+        border-bottom: 3px solid transparent;
     }
 
-    .nav-links a:hover {
-        color: #ddd;
+    @media (max-width: 1024px) {
+        .header {
+            flex-direction: column;
+            padding: 1rem 1rem;
+        }
+
+        .nav-links {
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .nav-links li {
+            margin: 3px 0;
+            width: 100%;
+        }
+
+        .nav-links a {
+            width: 100%;
+            text-align: center;
+        }
     }
 </style>

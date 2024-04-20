@@ -1,5 +1,6 @@
 <script>
-    import { onMount } from "svelte";
+    import {onMount} from "svelte";
+
     let matches = [];
     let filteredMatches = [];
 
@@ -16,7 +17,7 @@
         filterMatchesByDate();
     });
 
-    $: if(selectedDate) {
+    $: if (selectedDate) {
         filterMatchesByDate();
     }
 
@@ -27,7 +28,7 @@
             const teamPurple = match.filter(player => player.teamColor === 'Purple');
             const teamRed = match.filter(player => player.teamColor === 'Red');
             const winningTeam = match.find(player => player.winning === 1)?.teamColor === 'Purple' ? 'Purple' : 'Red';
-            return { teamPurple, teamRed, winningTeam };
+            return {teamPurple, teamRed, winningTeam};
         });
     }
 </script>
@@ -64,12 +65,14 @@
                     <td class={player.winning ? 'victory' : 'defeat'}>{player.nickname}</td>
                     <td class={player.winning ? 'victory' : 'defeat'}>{player.summonerName}</td>
                     <td class={player.winning ? 'victory' : 'defeat'}>{player.champion}</td>
-                    <td class={player.winning ? 'victory' : 'defeat'}>{player.kills}/{player.deaths}/{player.assists}</td>
+                    <td class={player.winning ? 'victory' : 'defeat'}>{player.kills}/{player.deaths}
+                        /{player.assists}</td>
                     {#if match.teamRed[index]}
                         <td class={match.teamRed[index].winning ? 'victory' : 'defeat' }>{match.teamRed[index].nickname}</td>
                         <td class={match.teamRed[index].winning ? 'victory' : 'defeat' }>{match.teamRed[index].summonerName}</td>
                         <td class={match.teamRed[index].winning ? 'victory' : 'defeat' }>{match.teamRed[index].champion}</td>
-                        <td class={match.teamRed[index].winning ? 'victory' : 'defeat' }>{match.teamRed[index].kills}/{match.teamRed[index].deaths}/{match.teamRed[index].assists}</td>
+                        <td class={match.teamRed[index].winning ? 'victory' : 'defeat' }>{match.teamRed[index].kills}
+                            /{match.teamRed[index].deaths}/{match.teamRed[index].assists}</td>
                     {/if}
                 </tr>
             {/each}
@@ -84,7 +87,7 @@
         border-collapse: collapse;
         table-layout: fixed;
         margin: 20px 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
     }
 
@@ -101,7 +104,7 @@
         font-weight: bold;
     }
 
-    .match-container{
+    .match-container {
         overflow-x: auto;
         overflow-y: auto;
     }
@@ -132,5 +135,24 @@
     .defeat {
         background-color: #F08080;
         color: white;
+    }
+
+    @media (max-width: 1024px) {
+        .nickname, .summonerName, .champion, .kda {
+            width: 25%;
+            height: 25%;
+            font-size: 7px;
+        }
+
+        .team-purple, .team-red {
+            font-size: 10px;
+        }
+
+        tr, td {
+            font-size: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 </style>

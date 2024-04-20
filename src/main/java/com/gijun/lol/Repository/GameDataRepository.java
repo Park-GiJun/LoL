@@ -7,12 +7,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GameDataRepository extends JpaRepository<GameData, Long> {
 
 	List<GameData> findByMatchCode (String matchCode);
 
-	@Query(value = "SELECT g.summoner_name AS summonerName, g.nickname AS nickname, " + "(SELECT champion FROM game_data gd WHERE gd.summoner_name = g.summoner_name GROUP BY gd.champion ORDER BY COUNT(*) DESC LIMIT 1) AS mostChampion, " + "(SELECT COUNT(*) FROM game_data gd WHERE gd.summoner_name = g.summoner_name) AS playedGames, " + "ROUND(SUM(CASE WHEN g.winning = 1 THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS winningPercentage, " + "g.kills, g.assists, g.deaths, " + "ROUND((SUM(g.kills) + SUM(g.assists)) / GREATEST(SUM(g.deaths), 1), 2) AS kda " + "FROM game_data g GROUP BY g.summoner_name, g.nickname " + "ORDER BY winningPercentage DESC, playedGames DESC", nativeQuery = true)
+	@Query(value = "SELECT g.summoner_name AS summonerName, g.nickname AS nickname, "
+			+ "(SELECT champion FROM game_data gd WHERE gd.summoner_name = g.summoner_name GROUP BY gd.champion ORDER BY COUNT(*) DESC LIMIT 1) AS mostChampion, "
+			+ "(SELECT COUNT(*) FROM game_data gd WHERE gd.summoner_name = g.summoner_name) AS playedGames, "
+			+ "ROUND(SUM(CASE WHEN g.winning = 1 THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS winningPercentage, "
+			+ "g.kills, g.assists, g.deaths, " + "ROUND((SUM(g.kills) + SUM(g.assists)) / GREATEST(SUM(g.deaths), 1), 2) AS kda "
+			+ "FROM game_data g GROUP BY g.summoner_name, g.nickname " + "ORDER BY winningPercentage DESC, playedGames DESC", nativeQuery = true)
 	List<LeaderboardEntry> findLeaderboardEntries ();
 
 	@Query(value = "SELECT COUNT(g.id)/10 AS totalGamesPlayed, " +
@@ -43,14 +49,14 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 	@Query(value = "SELECT " +
 			"    (SELECT champion FROM game_data WHERE nickname = ?1 GROUP BY champion ORDER BY COUNT(*) DESC LIMIT 1) AS mostChampion, " +
 			"    (SELECT COUNT(*) FROM game_data WHERE nickname = ?1) AS playedGames, " +
-			"    (SELECT ROUND(SUM(CASE WHEN winning = 1 THEN 1 ELSE 0 END) / COUNT(*), 2) FROM game_data WHERE nickname = ?1) * 100 AS winningPercentage" +
+			"    (SELECT ROUND(SUM(CASE WHEN winning = 1 THEN 1 ELSE 0 END) / COUNT(*), 2) FROM game_data WHERE nickname = ?1) * 100 AS winningPercentage " +
 			"FROM dual " +
 			"WHERE EXISTS (SELECT 1 FROM game_data WHERE nickname = ?1 GROUP BY nickname);", nativeQuery = true)
 	GameDataProjection findAggregatedDataByNickname(String nickname);
 
 	List<GameData> findByNicknameOrderByDateDesc (String nickname);
 
-	@Query("SELECT DISTINCT g.date FROM GameData g")
+	@Query(value ="SELECT DISTINCT g.date FROM game_data g", nativeQuery = true)
 	List<String> findDistinctDates();
 
 	@Query(value = "SELECT summoner_name, position, ROUND(SUM(CASE WHEN winning = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS winningPercentage " +
@@ -58,6 +64,12 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 			"WHERE summoner_name = :summoner_name AND position = :position " +
 			"GROUP BY summoner_name, position", nativeQuery = true)
 	PlayerProjection findWinningPercentage(@Param("summoner_name") String summoner_name, @Param("position") String position);
+
+	@Query(value = "SELECT DISTINCT g.champion FROM game_data g order by g.champion" ,nativeQuery = true)
+	List<String> findDistinctChampions();
+
+	@Query(value = "SELECT DISTINCT g.nickname, g.summoner_name from game_data g ORDER BY g.nickname", nativeQuery = true)
+	List<UserListProjection> userAndSummonerName();
 }
 
 
