@@ -99,6 +99,7 @@
     }
 
     th, td {
+        min-width: 150px;
         border: 1px solid #ddd;
         padding: 8px;
         text-align: center;
@@ -111,8 +112,9 @@
 
     @media (max-width:1024px) {
         th, td {
+            min-width: 100px;
             padding: 4px;
-            font-size: 7px;
+            font-size: 14px;
         }
         .table-container {
             overflow-x: scroll;

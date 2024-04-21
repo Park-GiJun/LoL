@@ -12,14 +12,14 @@
 
 	function computedStats() {
 		return [
-			{ header: "총 플레이 게임 수", key: "totalGamesPlayed" },
-			{ header: "게임한 날짜 수", key: "totalDaysPlayed" },
-			{ header: "총 킬수", key: "totalKills" },
-			{ header: "가장 많이 플레이된 챔피언", key: "mostPlayedChampion" },
-			{ header: "가장 많이 킬을 기록한 챔피언", key: "mostKillsChampion" },
-			{ header: "가장 많이 죽은 챔피언", key: "mostDeathsChampion" },
-			{ header: "가장 많은 챔피언을 플레이한 사람", key: "mostDifferentChampion"},
-			{ header: "가장 높은 KDA를 기록한 챔피언", key: "bestKDAChampion"}
+			{ header: "Total Games Played", key: "totalGamesPlayed" },
+			{ header: "Days Played", key: "totalDaysPlayed" },
+			{ header: "Total Kills", key: "totalKills" },
+			{ header: "Most Champion", key: "mostPlayedChampion" },
+			{ header: "Most Kills", key: "mostKillsChampion" },
+			{ header: "Most Deaths", key: "mostDeathsChampion" },
+			{ header: "Most Champions", key: "mostDifferentChampion"},
+			{ header: "Best KDA", key: "bestKDAChampion"}
 		].map(stat => ({ ...stat, value: statsData[stat.key] || 'Loading...' }));
 	}
 </script>
@@ -73,10 +73,15 @@
     }
 	@media (max-width: 1024px) {
 		.stats-grid {
-			grid-template-columns: repeat(2, 1fr);
+			grid-template-columns: repeat(1, 1fr);
 		}
-		.stat-header, .stat-content {
-			font-size: 0.9em;
+		.stat-header {
+			white-space: nowrap;
+			font-size: 16px;
+
+		}
+		.stat-content{
+			font-size: 14px;
 		}
 	}
 

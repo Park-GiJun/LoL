@@ -30,7 +30,6 @@ public class GameData {
 	private int deaths;
 	private int assists;
 
-	// 퍼플 승리 : 0  레드 승리 : 1
 	private int winning;
 
 }

@@ -98,6 +98,7 @@ public class GameDataService {
 		return groupedGameData;
 	}
 
+
 	public PlayerData getPlayerData(String type, String keyword) {
 		PlayerData playerData = new PlayerData();
 		log.info ("검색어 {}", keyword);
@@ -139,6 +140,10 @@ public class GameDataService {
 
 	public List<UserListProjection> searchUserList(){
 		return gameDataRepository.userAndSummonerName ();
+	}
+
+	public List<ChampionStatisticsProjection> searchTierList(){
+		return gameDataRepository.findChampionStatistics();
 	}
 
 }

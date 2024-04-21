@@ -65,14 +65,12 @@
                     <td class={player.winning ? 'victory' : 'defeat'}>{player.nickname}</td>
                     <td class={player.winning ? 'victory' : 'defeat'}>{player.summonerName}</td>
                     <td class={player.winning ? 'victory' : 'defeat'}>{player.champion}</td>
-                    <td class={player.winning ? 'victory' : 'defeat'}>{player.kills}/{player.deaths}
-                        /{player.assists}</td>
+                    <td class={player.winning ? 'victory' : 'defeat'}>{player.kills}/{player.deaths}/{player.assists}</td>
                     {#if match.teamRed[index]}
                         <td class={match.teamRed[index].winning ? 'victory' : 'defeat' }>{match.teamRed[index].nickname}</td>
                         <td class={match.teamRed[index].winning ? 'victory' : 'defeat' }>{match.teamRed[index].summonerName}</td>
                         <td class={match.teamRed[index].winning ? 'victory' : 'defeat' }>{match.teamRed[index].champion}</td>
-                        <td class={match.teamRed[index].winning ? 'victory' : 'defeat' }>{match.teamRed[index].kills}
-                            /{match.teamRed[index].deaths}/{match.teamRed[index].assists}</td>
+                        <td class={match.teamRed[index].winning ? 'victory' : 'defeat' }>{match.teamRed[index].kills}/{match.teamRed[index].deaths}/{match.teamRed[index].assists}</td>
                     {/if}
                 </tr>
             {/each}
@@ -83,7 +81,6 @@
 
 <style>
     table {
-        width: 100%;
         border-collapse: collapse;
         table-layout: fixed;
         margin: 20px 0;
@@ -92,6 +89,7 @@
     }
 
     th, td {
+        min-width: 150px;
         border: 1px solid #ddd;
         padding: 12px 8px;
         text-align: center;
@@ -141,15 +139,16 @@
         .nickname, .summonerName, .champion, .kda {
             width: 25%;
             height: 25%;
-            font-size: 7px;
+            font-size: 16px;
         }
 
         .team-purple, .team-red {
-            font-size: 10px;
+            font-size: 16px;
         }
 
         tr, td {
-            font-size: 5px;
+            min-width: 100px;
+            font-size: 14px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;

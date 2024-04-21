@@ -28,11 +28,11 @@ public class MatchController {
 	}
 
 	@PostMapping("/saveMatches")
-	public ResponseEntity<String> saveMatchInfo(@RequestBody MatchData matchData) {
-		Gson gson = new Gson();
-		gson.toJson(matchData);
-		String matchCode = matchCodeService.saveMatchCode();
-		gameDataService.saveMatchData(matchData, matchCode);
+	public ResponseEntity<String> saveMatchInfo (@RequestBody MatchData matchData) {
+		Gson gson = new Gson ();
+		gson.toJson (matchData);
+		String matchCode = matchCodeService.saveMatchCode ();
+		gameDataService.saveMatchData (matchData, matchCode);
 		return new ResponseEntity<> ("Match data saved successfully", HttpStatus.CREATED);
 	}
 
@@ -59,37 +59,37 @@ public class MatchController {
 	}
 
 	@GetMapping("/targetMatch")
-	public ResponseEntity<List<GameData>> getTargetMatch(@RequestParam("matchCode") String matchCode){
-		List<GameData>list = gameDataService.targetMatch (matchCode);
+	public ResponseEntity<List<GameData>> getTargetMatch (@RequestParam("matchCode") String matchCode) {
+		List<GameData> list = gameDataService.targetMatch (matchCode);
 		System.out.println (list.toString ());
 
 		return ResponseEntity.ok (gameDataService.targetMatch (matchCode));
 	}
 
 	@GetMapping("/activeDate")
-	public ResponseEntity<List<String>> getActiveDate(){
+	public ResponseEntity<List<String>> getActiveDate () {
 		return ResponseEntity.ok (gameDataService.getActiveDate ());
 	}
 
 	@GetMapping("/getArchive")
-	public ResponseEntity<ArchiveEntry> getArchive() {
+	public ResponseEntity<ArchiveEntry> getArchive () {
 		ArchiveEntry archiveEntry = gameDataService.queryArchive ();
-		return ResponseEntity.ok(archiveEntry);
+		return ResponseEntity.ok (archiveEntry);
 	}
 
 	@PostMapping("/AutoMatchMaking")
-	public ResponseEntity<List<List<Player>>> doAutoMatchMaking(@RequestBody List<getPlayers> players) {
-		List<Player> allPlayers = new ArrayList<>();
+	public ResponseEntity<List<List<Player>>> doAutoMatchMaking (@RequestBody List<getPlayers> players) {
+		List<Player> allPlayers = new ArrayList<> ();
 
 		for (getPlayers player : players) {
-			PlayerProjection playerProjection = gameDataService.searchWinningPercentage(player);
-			Player findPlayer = new Player(playerProjection.getSummoner_name(), playerProjection.getWinningPercentage(), playerProjection.getPosition());
-			allPlayers.add(findPlayer);
+			PlayerProjection playerProjection = gameDataService.searchWinningPercentage (player);
+			Player findPlayer = new Player (playerProjection.getSummoner_name (), playerProjection.getWinningPercentage (), playerProjection.getPosition ());
+			allPlayers.add (findPlayer);
 		}
 
-		TeamBalancer teamBalancer = new TeamBalancer();
+		TeamBalancer teamBalancer = new TeamBalancer ();
 
-		return ResponseEntity.ok( teamBalancer.findBalance(allPlayers));
+		return ResponseEntity.ok (teamBalancer.findBalance (allPlayers));
 	}
 
 	@GetMapping("/champions")
@@ -98,8 +98,12 @@ public class MatchController {
 	}
 
 	@GetMapping("/getUser")
-	public ResponseEntity<List<UserListProjection>> getUserList(){
+	public ResponseEntity<List<UserListProjection>> getUserList () {
 		return ResponseEntity.ok (gameDataService.searchUserList ());
 	}
 
+	@GetMapping("/tierList")
+	public ResponseEntity<List<ChampionStatisticsProjection>> getTierList() {
+		return ResponseEntity.ok (gameDataService.searchTierList());
+	}
 }

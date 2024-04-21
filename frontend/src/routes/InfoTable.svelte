@@ -58,7 +58,6 @@
 
 <style>
     table {
-        width: 100%;
         border-collapse: collapse;
         table-layout: fixed;
         margin: 20px 0;
@@ -68,6 +67,8 @@
 
     th, td {
         border: 1px solid #ddd;
+        font-size: 20px;
+        min-width: 150px;
         padding: 12px 8px;
         text-align: center;
         white-space: nowrap;
@@ -115,8 +116,9 @@
 
     @media (max-width:1024px) {
         th, td {
+            min-width: 100px;
             padding: 6px 2px;
-            font-size: 7px;
+            font-size: 14px;
         }
         .nickname, .summonerName, .champion, .kda {
             width: auto;

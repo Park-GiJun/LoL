@@ -6,6 +6,7 @@
         <li><a href="/">Main</a></li>
         <li><a href="/Matches">Matches</a></li>
         <li><a href="/Player">Player History</a></li>
+        <li><a href="/TierList">Tier List</a></li>
         <li><a href="/UserRegi">User Registration</a></li>
         <li><a href="/SaveMatch">Save Match</a></li>
         <li><a href="/AutoMatch">AutoMatch</a></li>

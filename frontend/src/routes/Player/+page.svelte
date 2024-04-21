@@ -117,7 +117,7 @@
 			<thead>
 			<tr>
 				<td>모스트 챔피언</td>
-				<td>게임횟수</td>
+				<td>게임 횟수</td>
 				<td>승률</td>
 			</tr>
 			</thead>
@@ -229,18 +229,17 @@
 
 
 <style>
-
-
     .main_container {
+		width: 100%;
         overflow-x: auto;
         overflow-y: auto;
     }
 
 
     table {
-        width: 100%;
+		width: 100%;
+		table-layout: fixed;
         border-collapse: collapse;
-        table-layout: fixed;
         margin: 20px 0;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
