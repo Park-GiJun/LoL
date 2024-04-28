@@ -75,7 +75,7 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 			"ranked_data.kda as kda, " +
 			"ranked_data.tier as tier, " +
 			"most_player.nickname as mostPlayedBy, " +
-			"ranked_data.playersCount as playersCount " +
+			"ranked_data.player_count as playersCount " +
 			"FROM ( " +
 			"    SELECT " +
 			"        g.champion as champion, " +
@@ -84,7 +84,7 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 			"        (SELECT COUNT(DISTINCT champion) FROM game_data) as total_rows, " +
 			"        COUNT(DISTINCT g.nickname) as player_count, " +
 			"        ROUND(SUM(g.kills + g.assists) / SUM(CASE WHEN g.deaths = 0 THEN 1 ELSE g.deaths END), 2) as kda, " +
-			"        COUNT(*) as playersCount, " + // Add this line to calculate playersCount
+			"        COUNT(*) as playersCount, " +
 			"        ROW_NUMBER() OVER (ORDER BY ROUND(SUM(CASE WHEN g.winning = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) DESC, COUNT(g.id) DESC) as rownum, " +
 			"        CASE " +
 			"            WHEN ROW_NUMBER() OVER (ORDER BY ROUND(SUM(CASE WHEN g.winning = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) DESC, COUNT(g.id) DESC) <= (SELECT COUNT(DISTINCT champion) FROM game_data) * 0.2 THEN 'Tier 1' " +

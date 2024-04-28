@@ -58,6 +58,7 @@
     onMount(loadStats);
 </script>
 
+<div class="main_container">
 <table>
     <thead>
     <tr>
@@ -84,8 +85,15 @@
     {/each}
     </tbody>
 </table>
+</div>
 
 <style>
+
+    .main_container{
+        overflow-x: auto;
+        overflow-y:auto;
+    }
+
     table {
         width: 100%;
         border-collapse: collapse;
