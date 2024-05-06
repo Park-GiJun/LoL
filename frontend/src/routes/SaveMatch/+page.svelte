@@ -237,6 +237,10 @@
         showDropdown = false;
     }
 
+    function swapTeamData() {
+        [teamPurple, teamRed] = [teamRed, teamPurple];
+    }
+
 
 </script>
 
@@ -316,6 +320,9 @@
 <button on:click={() => showChampionList = !showChampionList}>
     {#if showChampionList}챔피언 리스트 숨기기{:else}챔피언 리스트 보기{/if}
 </button>
+
+<button on:click={swapTeamData}>팀 데이터 교환</button>
+
 
 
 {#if showUserList}
@@ -498,6 +505,19 @@
 
     .champion-list li:hover {
         background-color: #f0f0f0;
+    }
+
+    .swap-button {
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
     }
 
 

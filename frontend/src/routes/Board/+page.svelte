@@ -8,10 +8,15 @@
 
     let data =""
 
-async function getBoard(){
-    const response = await fetch('api/board/getBoard');
-    data = await response.json();
-}
+    async function getBoard(){
+        try {
+            const response = await fetch('api/board/getBoard');
+            data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error("Failed to fetch data:", error);
+        }
+    }
 
 onMount(()=> {
     getBoard();
@@ -52,7 +57,7 @@ onMount(()=> {
 
 
 <div class="main_container">
-    {#if currentData.length > 0}
+
         <table>
             <thead>
             <tr>
@@ -64,14 +69,15 @@ onMount(()=> {
                 <th class="visit-col">visit</th>
             </tr>
             </thead>
+            {#if currentData.length > 0}
             <tbody>
             {#each currentData as item}
                 <tr>
                     <td>{item.category}</td>
-                    <td>{item.index}</td>
+                    <td>{item.idx}</td>
                     <td>{item.title}</td>
                     <td>{item.writer}</td>
-                    <td>{item.date}</td>
+                    <td>{item.time}</td>
                     <td>{item.visit}</td>
                 </tr>
             {/each}
@@ -88,6 +94,13 @@ onMount(()=> {
                 </td>
             </tr>
             </tbody>
+            {:else}
+                <tbody>
+                <tr>
+                    <td colspan="6">표시할 정보가 없습니다.</td>
+                </tr>
+                </tbody>
+            {/if}
         </table>
         <button class="writeButton" on:click={goToWrite}>글쓰기</button>
         <div class="pagination">
@@ -99,9 +112,8 @@ onMount(()=> {
             <button on:click={nextPage}>다음</button>
             <button on:click={() => goToPage(getPages(Math.ceil(data.length / itemsPerPage)).length)}>끝</button>
         </div>
-    {:else}
-        <p>표시할 데이터가 없습니다.</p>
-    {/if}
+
+
 </div>
 
 <style>

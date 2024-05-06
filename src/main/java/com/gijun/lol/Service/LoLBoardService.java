@@ -1,11 +1,16 @@
 package com.gijun.lol.Service;
 
+import com.gijun.lol.Data.LoLBoardProjection;
 import com.gijun.lol.Data.WriteData;
 import com.gijun.lol.Entity.LoLBoard;
 import com.gijun.lol.Repository.LoLBoardRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
+@Log4j2
 public class LoLBoardService {
 
 	private final LoLBoardRepository boardRepository;
@@ -23,5 +28,13 @@ public class LoLBoardService {
 		board.setTime (writeData.getTime ());
 		board.setVisit (writeData.getVisit ());
 		boardRepository.save (board);
+	}
+
+	public List<LoLBoardProjection> loadBoard(){
+		List<LoLBoardProjection> boards = boardRepository.getBoardList();
+		for (LoLBoardProjection lbp : boards) {
+			log.info (lbp);
+		}
+		return boards;
 	}
 }

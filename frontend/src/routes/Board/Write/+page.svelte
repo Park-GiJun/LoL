@@ -8,8 +8,11 @@
     let category = '건의';
 
     function handleSubmit() {
-        const time = new Date().toISOString();
+        const time = new Date();
         const visit = 0;
+        if (category === null) {
+            category = '자유';
+        }
         fetch("/api/board/write", {
             method: 'POST',
             headers: {
@@ -21,7 +24,7 @@
         })
             .then(response => {
                 if (response.ok) {
-                    return response.json();
+                    return response.text();
                 } else {
                     throw new Error('Something went wrong on api server!');
                 }
@@ -32,7 +35,7 @@
             })
             .catch(error => {
                 console.error(error);
-            })}
+            });}
 </script>
 
 <div class="container">
