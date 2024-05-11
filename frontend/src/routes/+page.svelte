@@ -2,6 +2,16 @@
  import Archive from './Archive.svelte';
  import InfoTable from "./InfoTable.svelte";
  import LeaderBoard from "./LeaderBoard.svelte";
+ import {onMount} from "svelte";
+
+ async function sendRequest() {
+     const response = await fetch('api/ip', {
+         method: 'POST'
+     });
+ }
+
+
+ onMount(sendRequest);
 </script>
 <h2>기록실</h2>
 <Archive />

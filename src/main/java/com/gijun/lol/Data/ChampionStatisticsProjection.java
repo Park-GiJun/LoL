@@ -8,5 +8,6 @@ public interface ChampionStatisticsProjection {
 	String getTier();
 	String getMostPlayedBy();
 	Integer getPlayersCount();
+	Double getBanRate();
 }
 

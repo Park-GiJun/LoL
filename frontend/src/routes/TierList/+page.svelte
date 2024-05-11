@@ -53,8 +53,6 @@
             });
         });
     }
-
-
     onMount(loadStats);
 </script>
 
@@ -65,6 +63,7 @@
         <th><button on:click={() => sortBy('tier')}>Tier</button></th>
         <th><button on:click={() => sortBy('champion')}>Champion</button></th>
         <th><button on:click={() => sortBy('winRate')}>Win Rate</button></th>
+        <th><button on:click={() => sortBy('banRate')}>ban Rate</button></th>
         <th><button on:click={() => sortBy('played')}>Played</button></th>
         <th><button on:click={() => sortBy('kda')}>KDA</button></th>
         <th><button on:click={() => sortBy('mostPlayedBy')}>Most Played By</button></th>
@@ -77,6 +76,7 @@
             <td data-tier="{stat.tier}">{stat.tier}</td>
             <td>{stat.champion}</td>
             <td>{stat.winRate}%</td>
+            <td>{stat.banRate}%</td>
             <td>{stat.played}</td>
             <td>{stat.kda}</td>
             <td>{stat.mostPlayedBy}</td>
@@ -105,7 +105,7 @@
         padding: 8px;
         text-align: center;
         min-width: 120px;
-        font-family: Arial, sans-serif; /* 변경 가능한 글꼴 */
+        font-family: Arial, sans-serif;
     }
     th {
         background-color: #eee;

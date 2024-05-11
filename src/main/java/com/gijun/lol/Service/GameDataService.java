@@ -91,7 +91,7 @@ public class GameDataService {
 		List<List<GameData>> groupedGameData = new ArrayList<> ();
 		for (MatchCode matchCode : allMatchCodes) {
 			List<GameData> gameDataForMatch = gameDataRepository.findByMatchCode(matchCode.getMatchCode());
-			gameDataForMatch.sort (Comparator.comparing (GameData::getDate));
+			gameDataForMatch.sort (Comparator.comparing (GameData::getDate).reversed ());
 			groupedGameData.add(gameDataForMatch);
 		}
 

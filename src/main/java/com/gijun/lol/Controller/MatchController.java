@@ -6,6 +6,7 @@ import com.gijun.lol.Service.GameDataService;
 import com.gijun.lol.Service.MatchCodeService;
 import com.gijun.lol.Utils.TeamBalancer;
 import com.google.gson.Gson;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,15 @@ public class MatchController {
 	public MatchController (GameDataService gameDataService, MatchCodeService matchCodeService) {
 		this.gameDataService = gameDataService;
 		this.matchCodeService = matchCodeService;
+	}
+
+	@PostMapping("/ip")
+	public void logVisitorIPAddress(HttpServletRequest request) {
+		String ipAddress = request.getHeader("X-Forwarded-For");
+		if (ipAddress == null || ipAddress.isEmpty()) {
+			ipAddress = request.getRemoteAddr();
+		}
+		log.info("Visitor IP Address: {}", ipAddress);
 	}
 
 	@PostMapping("/saveMatches")

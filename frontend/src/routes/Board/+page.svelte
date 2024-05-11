@@ -1,12 +1,10 @@
 <script>
-
     import {goto} from "$app/navigation";
     import {onMount} from "svelte";
 
     let currentPage = 1;
     const itemsPerPage = 10;
-
-    let data =""
+    let data = "";
 
     async function getBoard(){
         try {
@@ -18,9 +16,10 @@
         }
     }
 
-onMount(()=> {
-    getBoard();
-})
+    onMount(() => {
+        getBoard();
+    });
+
     function nextPage() {
         const totalPages = Math.ceil(data.length / itemsPerPage);
         if (currentPage < totalPages) {
@@ -38,41 +37,39 @@ onMount(()=> {
         currentPage = page;
     }
 
+    function goToWrite() {
+        goto('/Board/Write');
+    }
+
+    function goToDetail(id) {
+        goto(`/Board/Detail/${id}`);
+    }
+
     $: startIndex = (currentPage - 1) * itemsPerPage;
     $: endIndex = startIndex + itemsPerPage;
     $: currentData = data.slice(startIndex, endIndex);
 
     function getPages(totalPages) {
-        const pages = [];
-        for (let i = 1; i <= totalPages; i++) {
-            pages.push(i);
-        }
-        return pages;
-    }
-
-    function goToWrite() {
-        goto('/Board/Write');
+        return Array.from({length: totalPages}, (_, i) => i + 1);
     }
 </script>
 
-
 <div class="main_container">
-
-        <table>
-            <thead>
-            <tr>
-                <th class="category-col">Category</th>
-                <th class="index-col">index</th>
-                <th class="title-col">title</th>
-                <th>writer</th>
-                <th>date</th>
-                <th class="visit-col">visit</th>
-            </tr>
-            </thead>
-            {#if currentData.length > 0}
+    <table>
+        <thead>
+        <tr>
+            <th class="category-col">Category</th>
+            <th class="index-col">index</th>
+            <th class="title-col">title</th>
+            <th>writer</th>
+            <th>date</th>
+            <th class="visit-col">visit</th>
+        </tr>
+        </thead>
+        {#if currentData.length > 0}
             <tbody>
             {#each currentData as item}
-                <tr>
+                <tr on:click={() => goToDetail(item.id)}>
                     <td>{item.category}</td>
                     <td>{item.idx}</td>
                     <td>{item.title}</td>
@@ -81,41 +78,26 @@ onMount(()=> {
                     <td>{item.visit}</td>
                 </tr>
             {/each}
+            </tbody>
+        {:else}
+            <tbody>
             <tr>
-                <td colspan="6">
-                    <select>
-                        <option>카테고리</option>
-                        <option>제목</option>
-                        <option>내용</option>
-                        <option>작성자</option>
-                    </select>
-                    <input type="text">
-                    <button>검색</button>
-                </td>
+                <td colspan="6">표시할 정보가 없습니다.</td>
             </tr>
             </tbody>
-            {:else}
-                <tbody>
-                <tr>
-                    <td colspan="6">표시할 정보가 없습니다.</td>
-                </tr>
-                </tbody>
-            {/if}
-        </table>
-        <button class="writeButton" on:click={goToWrite}>글쓰기</button>
-        <div class="pagination">
-            <button on:click={() => goToPage(1)}>처음</button>
-            <button on:click={prevPage}>이전</button>
-            {#each getPages(Math.ceil(data.length / itemsPerPage)) as page}
-                <button on:click={() => goToPage(page)}>{page}</button>
-            {/each}
-            <button on:click={nextPage}>다음</button>
-            <button on:click={() => goToPage(getPages(Math.ceil(data.length / itemsPerPage)).length)}>끝</button>
-        </div>
-
-
+        {/if}
+    </table>
+    <button class="writeButton" on:click={goToWrite}>글쓰기</button>
+    <div class="pagination">
+        <button on:click={() => goToPage(1)}>처음</button>
+        <button on:click={prevPage}>이전</button>
+        {#each getPages(Math.ceil(data.length / itemsPerPage)) as page}
+            <button on:click={() => goToPage(page)}>{page}</button>
+        {/each}
+        <button on:click={nextPage}>다음</button>
+        <button on:click={() => goToPage(getPages(Math.ceil(data.length / itemsPerPage)).length)}>끝</button>
+    </div>
 </div>
-
 <style>
     table {
         width: 100%;

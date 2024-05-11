@@ -69,40 +69,41 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 	List<UserListProjection> userAndSummonerName ();
 
 	@Query(value = "SELECT " +
-			"ranked_data.champion as champion, " +
-			"ranked_data.winRate as winRate, " +
-			"ranked_data.played as played, " +
-			"ranked_data.kda as kda, " +
-			"ranked_data.tier as tier, " +
-			"most_player.nickname as mostPlayedBy, " +
-			"ranked_data.player_count as playersCount " +
-			"FROM ( " +
-			"    SELECT " +
-			"        g.champion as champion, " +
-			"        ROUND(SUM(CASE WHEN g.winning = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) as winRate, " +
-			"        COUNT(g.id) as played, " +
-			"        (SELECT COUNT(DISTINCT champion) FROM game_data) as total_rows, " +
-			"        COUNT(DISTINCT g.nickname) as player_count, " +
-			"        ROUND(SUM(g.kills + g.assists) / SUM(CASE WHEN g.deaths = 0 THEN 1 ELSE g.deaths END), 2) as kda, " +
-			"        COUNT(*) as playersCount, " +
-			"        ROW_NUMBER() OVER (ORDER BY ROUND(SUM(CASE WHEN g.winning = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) DESC, COUNT(g.id) DESC) as rownum, " +
-			"        CASE " +
-			"            WHEN ROW_NUMBER() OVER (ORDER BY ROUND(SUM(CASE WHEN g.winning = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) DESC, COUNT(g.id) DESC) <= (SELECT COUNT(DISTINCT champion) FROM game_data) * 0.2 THEN 'Tier 1' " +
-			"            WHEN ROW_NUMBER() OVER (ORDER BY ROUND(SUM(CASE WHEN g.winning = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) DESC, COUNT(g.id) DESC) <= (SELECT COUNT(DISTINCT champion) FROM game_data) * 0.4 THEN 'Tier 2' " +
-			"            WHEN ROW_NUMBER() OVER (ORDER BY ROUND(SUM(CASE WHEN g.winning = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) DESC, COUNT(g.id) DESC) <= (SELECT COUNT(DISTINCT champion) FROM game_data) * 0.6 THEN 'Tier 3' " +
-			"            WHEN ROW_NUMBER() OVER (ORDER BY ROUND(SUM(CASE WHEN g.winning = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) DESC, COUNT(g.id) DESC) <= (SELECT COUNT(DISTINCT champion) FROM game_data) * 0.8 THEN 'Tier 4' " +
-			"            ELSE 'Tier 5' " +
-			"        END as tier " +
-			"    FROM game_data g " +
-			"    GROUP BY g.champion " +
-			"    HAVING COUNT(g.id) >= 3 " +
-			") as ranked_data " +
-			"LEFT JOIN ( " +
-			"    SELECT champion, nickname, " +
-			"    ROW_NUMBER() OVER (PARTITION BY champion ORDER BY COUNT(id) DESC) as player_rank " +
-			"    FROM game_data GROUP BY champion, nickname " +
-			") as most_player ON most_player.champion = ranked_data.champion AND most_player.player_rank = 1 " +
-			"ORDER BY winRate DESC, played DESC", nativeQuery = true)
+			"ranked_data.champion AS champion, " +
+			"ranked_data.winRate AS winRate, " +
+			"ranked_data.played AS played, " +
+			"ranked_data.kda AS kda, " +
+			"ranked_data.tier AS tier, " +
+			"most_player.nickname AS mostPlayedBy, " +
+			"ranked_data.playersCount AS playersCount, " +
+			"ROUND(COALESCE(ban_data.banRate, 0), 2) AS banRate " +
+			"FROM ( SELECT " +
+			"   g.champion AS champion, " +
+			"   ROUND(SUM(CASE WHEN g.winning = TRUE THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) AS winRate, " +
+			"   COUNT(g.id) AS played, " +
+			"   ROUND(SUM(g.kills + g.assists) / SUM(CASE WHEN g.deaths = 0 THEN 1 ELSE g.deaths END), 2) AS kda, " +
+			"   COUNT(DISTINCT g.nickname) AS playersCount, " +
+			"   CASE " +
+			"       WHEN ROW_NUMBER() OVER (ORDER BY ROUND(SUM(CASE WHEN g.winning = TRUE THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) DESC, COUNT(g.id) DESC) <= (SELECT COUNT(DISTINCT champion) FROM game_data) * 0.2 THEN 'Tier 1' " +
+			"       WHEN ROW_NUMBER() OVER (ORDER BY ROUND(SUM(CASE WHEN g.winning = TRUE THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) DESC, COUNT(g.id) DESC) <= (SELECT COUNT(DISTINCT champion) FROM game_data) * 0.4 THEN 'Tier 2' " +
+			"       WHEN ROW_NUMBER() OVER (ORDER BY ROUND(SUM(CASE WHEN g.winning = TRUE THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) DESC, COUNT(g.id) DESC) <= (SELECT COUNT(DISTINCT champion) FROM game_data) * 0.6 THEN 'Tier 3' " +
+			"       WHEN ROW_NUMBER() OVER (ORDER BY ROUND(SUM(CASE WHEN g.winning = TRUE THEN 1 ELSE 0 END) * 100.0 / COUNT(g.id), 2) DESC, COUNT(g.id) DESC) <= (SELECT COUNT(DISTINCT champion) FROM game_data) * 0.8 THEN 'Tier 4' " +
+			"       ELSE 'Tier 5' " +
+			"   END AS tier " +
+			"FROM game_data g " +
+			"GROUP BY g.champion " +
+			"HAVING COUNT(g.id) >= 3) AS ranked_data " +
+			"LEFT JOIN ( SELECT " +
+			"   champion, nickname, " +
+			"   ROW_NUMBER() OVER (PARTITION BY champion ORDER BY COUNT(id) DESC) AS player_rank " +
+			"FROM game_data " +
+			"GROUP BY champion, nickname) AS most_player ON most_player.champion = ranked_data.champion AND most_player.player_rank = 1 " +
+			"LEFT JOIN ( SELECT " +
+			"   ban_champion, " +
+			"   COUNT(*) * 100.0 / (SELECT COUNT(DISTINCT match_code) FROM ban) AS banRate " +
+			"FROM ban " +
+			"GROUP BY ban_champion) AS ban_data ON ban_data.ban_champion = ranked_data.champion " +
+			"ORDER BY ranked_data.winRate DESC, ranked_data.played DESC", nativeQuery = true)
 	List<ChampionStatisticsProjection> findChampionStatistics();
 }
 

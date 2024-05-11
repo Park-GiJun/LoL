@@ -1,19 +1,20 @@
 <script>
-    import {onMount} from "svelte";
+    import { onMount } from "svelte";
 
     let matches = [];
     let filteredMatches = [];
 
     let availableDates = [];
-    let selectedDate = '2024-03-18';
+    let selectedDate;
 
     onMount(async () => {
         const response = await fetch('/api/matches');
         matches = await response.json();
 
         const dates = new Set(matches.flat().map(match => match.date));
-        availableDates = Array.from(dates).sort();
+        availableDates = Array.from(dates).sort((a, b) => new Date(b) - new Date(a));  // 내림차순 정렬
 
+        selectedDate = availableDates[0];  // 가장 최신 날짜를 기본값으로 설정
         filterMatchesByDate();
     });
 
