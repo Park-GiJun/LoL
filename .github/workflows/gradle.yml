@@ -1,67 +1,51 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
-
-name: Java CI with Gradle
+name: Deploy to EC2
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches:
+      - main
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    # Configure Gradle for optimal use in GiHub Actions, including caching of downloaded dependencies.
-    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
 
-    - name: Build with Gradle Wrapper
-      run: ./gradlew build
+    - name: Login to DockerHub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
-    # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
-    #
-    # - name: Setup Gradle
-    #   uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
-    #   with:
-    #     gradle-version: '8.5'
-    #
-    # - name: Build with Gradle 8.5
-    #   run: gradle build
+    - name: Build and push Docker image
+      run: |
+        ./gradlew bootJar
+        docker build -t aa/aa:latest .
+        docker push aa/aa:latest
 
-  dependency-submission:
-
+  deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    needs: build
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
-    # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
-    - name: Generate and submit dependency graph
-      uses: gradle/actions/dependency-submission@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+    - name: Install SSH pass
+      run: sudo apt-get install -y sshpass
+
+    - name: Deploy to EC2
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        EC2_HOST: ${{ secrets.EC2_HOST }}
+        EC2_USER: ${{ secrets.EC2_USER }}
+      run: |
+        sshpass -e ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << EOF
+          docker pull aa/aa:latest
+          docker stop $(docker ps -q --filter ancestor=aa/aa:latest) || true
+          docker rm $(docker ps -a -q --filter ancestor=aa/aa:latest) || true
+          nohup docker run -d -p 9090:9090 aa/aa:latest > log.out 2> err.out &
+        EOF
