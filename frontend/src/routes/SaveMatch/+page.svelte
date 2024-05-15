@@ -238,10 +238,11 @@
     }
 
     function swapTeamData() {
-        [teamPurple, teamRed] = [teamRed, teamPurple];
+        const tempPurple = JSON.parse(JSON.stringify(teamPurple));
+        const tempRed = JSON.parse(JSON.stringify(teamRed));
+        teamPurple = tempRed;
+        teamRed = tempPurple;
     }
-
-
 </script>
 
 <form on:submit|preventDefault={saveMatchInfo}>

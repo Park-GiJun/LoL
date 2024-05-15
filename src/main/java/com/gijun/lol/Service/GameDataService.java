@@ -146,4 +146,8 @@ public class GameDataService {
 		return gameDataRepository.findChampionStatistics();
 	}
 
+	public List<DuoWinRateProjection> searchBotDuoWinRateList(){
+		return gameDataRepository.getBotDuoWinRateBest6 ();
+	}
+
 }

@@ -1,0 +1,15 @@
+SELECT
+    adc.nickname AS a_nickname,
+    support.nickname AS b_nickname,
+    COUNT(*) AS duo_count
+FROM
+    game_data adc
+        JOIN
+    game_data support ON adc.match_code = support.match_code AND adc.team_color = support.team_color
+WHERE
+    adc.position = 'ADC' AND support.position = 'Support'
+GROUP BY
+    adc.nickname, support.nickname
+ORDER BY
+    duo_count DESC
+LIMIT 5;

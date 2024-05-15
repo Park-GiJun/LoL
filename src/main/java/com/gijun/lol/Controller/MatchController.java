@@ -116,4 +116,9 @@ public class MatchController {
 	public ResponseEntity<List<ChampionStatisticsProjection>> getTierList() {
 		return ResponseEntity.ok (gameDataService.searchTierList());
 	}
+
+	@GetMapping("/getBotDuoStats")
+	public ResponseEntity<List<DuoWinRateProjection>> getBotDuoWinRateList(){
+		return ResponseEntity.ok (gameDataService.searchBotDuoWinRateList ());
+	}
 }
