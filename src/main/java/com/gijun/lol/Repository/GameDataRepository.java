@@ -120,10 +120,33 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 			"   adc.position = 'ADC' AND support.position = 'Support'" +
 			" GROUP BY " +
 			"   adc.nickname, support.nickname" +
+			" HAVING" +
+			" count(*) > 5" +
 			" ORDER BY " +
-			"   duoCount DESC, winCount DESC, winRate DESC" +
+			"   duoCount DESC, winRate DESC, winCount DESC" +
 			" LIMIT 6", nativeQuery = true)
 	List<DuoWinRateProjection> getBotDuoWinRateBest6();
+
+	@Query(value = "SELECT " +
+			" adc.nickname AS midNickname," +
+			" support.nickname AS jungleNickname," +
+			" COUNT(*) AS duoCount," +
+			" SUM(CASE WHEN gd.winning = 1 THEN 1 ELSE 0 END) AS winCount," +
+			" ROUND(SUM(CASE WHEN gd.winning = 1 THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS winRate" +
+			" FROM" +
+			"   game_data gd" +
+			" JOIN" +
+			"   game_data gd2 ON gd.match_code = gd2.match_code AND gd.team_color = gd2.team_color" +
+			" WHERE" +
+			"   gd.position = 'Mid' AND gd2.position = 'Jungle'" +
+			" GROUP BY " +
+			"   gd.nickname, gd2.nickname" +
+			" HAVING" +
+			" count(*) > 5" +
+			" ORDER BY " +
+			"   duoCount DESC, winRate DESC, winCount DESC" +
+			" LIMIT 6", nativeQuery = true)
+	List<DuoWinRateProjection> getMidJunDuoWinRateBest6();
 }
 
 
