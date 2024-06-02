@@ -150,4 +150,8 @@ public class GameDataService {
 		return gameDataRepository.getBotDuoWinRateBest6 ();
 	}
 
+	public List<TrioStatisticsProjection> searchTrioWinRateList(){
+		return gameDataRepository.getTrioWinRate();
+	}
+
 }

@@ -121,4 +121,9 @@ public class MatchController {
 	public ResponseEntity<List<DuoWinRateProjection>> getBotDuoWinRateList(){
 		return ResponseEntity.ok (gameDataService.searchBotDuoWinRateList ());
 	}
+
+	@GetMapping("/getTrioStats")
+	public ResponseEntity<List<TrioStatisticsProjection>> getTrioWinRateList(){
+		return ResponseEntity.ok (gameDataService.searchTrioWinRateList ());
+	}
 }

@@ -28,4 +28,5 @@ public class LoLBoardController {
 	public ResponseEntity<List<LoLBoardProjection>> getBoard(){
 		return ResponseEntity.ok (boardService.loadBoard ());
 	}
+
 }

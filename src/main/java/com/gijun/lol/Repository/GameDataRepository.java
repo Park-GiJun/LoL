@@ -128,25 +128,29 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 	List<DuoWinRateProjection> getBotDuoWinRateBest6();
 
 	@Query(value = "SELECT " +
-			" adc.nickname AS midNickname," +
-			" support.nickname AS jungleNickname," +
-			" COUNT(*) AS duoCount," +
-			" SUM(CASE WHEN gd.winning = 1 THEN 1 ELSE 0 END) AS winCount," +
-			" ROUND(SUM(CASE WHEN gd.winning = 1 THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS winRate" +
+			" mid.nickname AS midNickname," +
+			" jungle.nickname AS jungleNickname," +
+			" top.nickname AS topNickname," +
+			" COUNT(*) AS trioCount," +
+			" SUM(CASE WHEN mid.winning = 1 THEN 1 ELSE 0 END) AS winCount," +
+			" ROUND(SUM(CASE WHEN mid.winning = 1 THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS winRate" +
 			" FROM" +
-			"   game_data gd" +
+			"   game_data mid" +
 			" JOIN" +
-			"   game_data gd2 ON gd.match_code = gd2.match_code AND gd.team_color = gd2.team_color" +
+			"   game_data jungle ON mid.match_code = jungle.match_code AND mid.team_color = jungle.team_color" +
+			" JOIN" +
+			"   game_data top ON mid.match_code = top.match_code AND mid.team_color = top.team_color" +
 			" WHERE" +
-			"   gd.position = 'Mid' AND gd2.position = 'Jungle'" +
+			"   mid.position = 'Mid' AND jungle.position = 'Jungle' AND top.position = 'Top'" +
 			" GROUP BY " +
-			"   gd.nickname, gd2.nickname" +
+			"   mid.nickname, jungle.nickname, top.nickname" +
 			" HAVING" +
-			" count(*) > 5" +
+			" COUNT(*) > 5" +
 			" ORDER BY " +
-			"   duoCount DESC, winRate DESC, winCount DESC" +
+			"   winRate DESC, trioCount DESC, winCount DESC" +
 			" LIMIT 6", nativeQuery = true)
-	List<DuoWinRateProjection> getMidJunDuoWinRateBest6();
+	List<TrioStatisticsProjection> getTrioWinRate();
+
 }
 
 

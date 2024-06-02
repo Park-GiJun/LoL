@@ -2,24 +2,66 @@
     import { onMount } from 'svelte';
 
     let bottomDuoStats = [];
+    let topTrioStats = [];
 
     onMount(async () => {
         const response = await fetch('/api/getBotDuoStats');
         bottomDuoStats = await response.json();
+
+        const response2 = await fetch('/api/getTrioStats');
+        topTrioStats = await response2.json();
     });
 </script>
 
 <h2>바텀 듀오</h2>
-<div class="bottomDuoGrid">
+<table class="stats-table">
+    <thead>
+    <tr>
+        <th>ADC</th>
+        <th>Support</th>
+        <th>Games Played</th>
+        <th>Wins</th>
+        <th>Win Rate</th>
+    </tr>
+    </thead>
+    <tbody>
     {#each bottomDuoStats as {adcNickname, supportNickname, duoCount, winCount, winRate}}
-        <div class="stat-card">
-            <div class="stat-header">{adcNickname} & {supportNickname}</div>
-            <div class="stat-content">Games Played: {duoCount}</div>
-            <div class="stat-content">Wins: {winCount}</div>
-            <div class="stat-content">Win Rate: {winRate}%</div>
-        </div>
+        <tr>
+            <td>{adcNickname}</td>
+            <td>{supportNickname}</td>
+            <td>{duoCount}</td>
+            <td>{winCount}</td>
+            <td>{winRate}%</td>
+        </tr>
     {/each}
-</div>
+    </tbody>
+</table>
+
+<h2>상체 트리오</h2>
+<table class="stats-table">
+    <thead>
+    <tr>
+        <th>Top</th>
+        <th>Jungle</th>
+        <th>Mid</th>
+        <th>Games Played</th>
+        <th>Wins</th>
+        <th>Win Rate</th>
+    </tr>
+    </thead>
+    <tbody>
+    {#each topTrioStats as {midNickname, jungleNickname, topNickname, trioCount, winCount, winRate}}
+        <tr>
+            <td>{topNickname}</td>
+            <td>{jungleNickname}</td>
+            <td>{midNickname}</td>
+            <td>{trioCount}</td>
+            <td>{winCount}</td>
+            <td>{winRate}%</td>
+        </tr>
+    {/each}
+    </tbody>
+</table>
 
 <style>
     h2 {
@@ -28,72 +70,43 @@
         margin-bottom: 20px;
     }
 
-    .bottomDuoGrid {
-        display: grid;
-        grid-template-columns: repeat(3, 2fr);
-        grid-gap: 20px;
-        padding: 20px;
+    .stats-table {
+        width: 100%;
         max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .stat-card {
+        margin: 0 auto 40px auto;
+        border-collapse: collapse;
         background-color: #f9f9f9;
-        border-radius: 12px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
     }
 
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    .stats-table th, .stats-table td {
+        padding: 12px 15px;
+        text-align: center;
+        border: 1px solid #ddd;
     }
 
-    .stat-header {
-        font-size: 1.25em;
-        color: #333;
-        margin-bottom: 10px;
+    .stats-table th {
+        background-color: #f1f1f1;
         font-weight: 700;
-        text-align: center;
     }
 
-    .stat-content {
-        font-size: 1.125em;
-        color: #555;
-        font-weight: 400;
-        text-align: center;
+    .stats-table tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .stats-table tbody tr:hover {
+        background-color: #e9e9e9;
     }
 
     @media (max-width: 1024px) {
-        .bottomDuoGrid {
-            grid-template-columns: repeat(3, 2fr);
-        }
-
-        .stat-header {
-            font-size: 1em;
-        }
-
-        .stat-content {
-            font-size: 0.875em;
+        .stats-table th, .stats-table td {
+            padding: 10px 12px;
         }
     }
 
     @media (max-width: 600px) {
-        .bottomDuoGrid {
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        }
-
-        .stat-header {
+        .stats-table th, .stats-table td {
+            padding: 8px 10px;
             font-size: 0.875em;
-        }
-
-        .stat-content {
-            font-size: 0.75em;
         }
     }
 </style>
