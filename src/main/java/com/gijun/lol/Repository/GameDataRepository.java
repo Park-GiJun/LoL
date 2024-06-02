@@ -104,7 +104,7 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 			"FROM ban " +
 			"GROUP BY ban_champion) AS ban_data ON ban_data.ban_champion = ranked_data.champion " +
 			"ORDER BY ranked_data.winRate DESC, ranked_data.played DESC", nativeQuery = true)
-	List<ChampionStatisticsProjection> findChampionStatistics();
+	List<ChampionStatisticsProjection> findChampionStatistics ();
 
 	@Query(value = "SELECT " +
 			" adc.nickname AS adcNickname," +
@@ -125,7 +125,7 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 			" ORDER BY " +
 			"   duoCount DESC, winRate DESC, winCount DESC" +
 			" LIMIT 6", nativeQuery = true)
-	List<DuoWinRateProjection> getBotDuoWinRateBest6();
+	List<DuoWinRateProjection> getBotDuoWinRateBest6 ();
 
 	@Query(value = "SELECT " +
 			" mid.nickname AS midNickname," +
@@ -149,8 +149,27 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 			" ORDER BY " +
 			"   winRate DESC, trioCount DESC, winCount DESC" +
 			" LIMIT 6", nativeQuery = true)
-	List<TrioStatisticsProjection> getTrioWinRate();
+	List<TrioStatisticsProjection> getTrioWinRate ();
 
+	@Query(value = "SELECT" +
+			"    LEAST(me.nickname, friend.nickname) AS fistNickname," +
+			"    GREATEST(me.nickname, friend.nickname) AS secondNickName," +
+			"    COUNT(*) / 2 AS duoCount," +
+			"    SUM(CASE WHEN me.winning = 1 THEN 1 ELSE 0 END) / 2 AS winCount," +
+			"    ROUND(SUM(CASE WHEN me.winning = 1 THEN 1 ELSE 0 END) / COUNT(*) * 100, 2) AS winRate" +
+			" FROM" +
+			"    game_data me" +
+			"        JOIN" +
+			"    game_data friend ON me.match_code = friend.match_code AND me.team_color = friend.team_color" +
+			" WHERE" +
+			"    me.nickname != friend.nickname" +
+			" GROUP BY" +
+			"    fistNickname, secondNickName" +
+			" HAVING" +
+			"    COUNT(*) > 10 " +
+			" ORDER BY" +
+			"    winRate DESC, duoCount DESC, winRate DESC;", nativeQuery = true)
+	List<BestFriendsProjection> bestFriendsList();
 }
 
 

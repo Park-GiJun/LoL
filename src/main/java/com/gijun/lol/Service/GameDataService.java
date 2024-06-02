@@ -154,4 +154,8 @@ public class GameDataService {
 		return gameDataRepository.getTrioWinRate();
 	}
 
+	public List<BestFriendsProjection> searchBestFriendsList(){
+		return gameDataRepository.bestFriendsList ();
+	}
+
 }

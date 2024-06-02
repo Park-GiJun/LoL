@@ -21,7 +21,6 @@ public class MatchCodeService {
 			matchCode = MatchCodeGenerator.generateMatchCodeWithUUID();
 		} while (matchCodeRepository.existsByMatchCode(matchCode));
 
-		// MatchCode 객체를 생성하여 저장
 		MatchCode newMatchCode = new MatchCode();
 		newMatchCode.setMatchCode(matchCode);
 		matchCodeRepository.save(newMatchCode);

@@ -29,12 +29,12 @@ public class MatchController {
 	}
 
 	@PostMapping("/ip")
-	public void logVisitorIPAddress(HttpServletRequest request) {
-		String ipAddress = request.getHeader("X-Forwarded-For");
-		if (ipAddress == null || ipAddress.isEmpty()) {
-			ipAddress = request.getRemoteAddr();
+	public void logVisitorIPAddress (HttpServletRequest request) {
+		String ipAddress = request.getHeader ("X-Forwarded-For");
+		if (ipAddress == null || ipAddress.isEmpty ()) {
+			ipAddress = request.getRemoteAddr ();
 		}
-		log.info("Visitor IP Address: {}", ipAddress);
+		log.info ("Visitor IP Address: {}", ipAddress);
 	}
 
 	@PostMapping("/saveMatches")
@@ -113,17 +113,22 @@ public class MatchController {
 	}
 
 	@GetMapping("/tierList")
-	public ResponseEntity<List<ChampionStatisticsProjection>> getTierList() {
-		return ResponseEntity.ok (gameDataService.searchTierList());
+	public ResponseEntity<List<ChampionStatisticsProjection>> getTierList () {
+		return ResponseEntity.ok (gameDataService.searchTierList ());
 	}
 
 	@GetMapping("/getBotDuoStats")
-	public ResponseEntity<List<DuoWinRateProjection>> getBotDuoWinRateList(){
+	public ResponseEntity<List<DuoWinRateProjection>> getBotDuoWinRateList () {
 		return ResponseEntity.ok (gameDataService.searchBotDuoWinRateList ());
 	}
 
 	@GetMapping("/getTrioStats")
-	public ResponseEntity<List<TrioStatisticsProjection>> getTrioWinRateList(){
+	public ResponseEntity<List<TrioStatisticsProjection>> getTrioWinRateList () {
 		return ResponseEntity.ok (gameDataService.searchTrioWinRateList ());
+	}
+
+	@GetMapping("/getBestFriendsStats")
+	public ResponseEntity<List<BestFriendsProjection>> getBestFriendsRateList(){
+		return ResponseEntity.ok (gameDataService.searchBestFriendsList ());
 	}
 }
