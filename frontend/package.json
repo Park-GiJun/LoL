@@ -25,6 +25,8 @@
 	"dependencies": {
 		"@sveltejs/adapter-static": "^3.0.1",
 		"quill": "^2.0.2",
+		"svelte-calendar": "^3.1.6",
+		"svelte-datepicker": "^1.0.0",
 		"svelte-dnd-action": "^0.9.47",
 		"svelte-routing": "^2.13.0"
 	}
